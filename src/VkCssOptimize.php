@@ -1,4 +1,4 @@
-<?php
+<?php //phpcs:ignore
 /**
  * VK CSS Optimize
  *
@@ -8,7 +8,7 @@
  * @version 0.1.0
  */
 
- namespace VektorInc\VK_CSS_Optimize;
+namespace VektorInc\VK_CSS_Optimize;
 
 /**
  * VK CSS Optimize
@@ -20,8 +20,7 @@ class VkCssOptimize {
 	 */
 	public function __construct() {
 		add_action( 'customize_register', array( __CLASS__, 'customize_register' ) );
-		// 
-		add_action( 'wp_enqueue_scripts', array(  __CLASS__, 'css_simple_minify_option' ), 2147483647 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'css_simple_minify_option' ), 2147483647 );
 		add_filter( 'css_tree_shaking_exclude', array( __CLASS__, 'tree_shaking_exclude' ) );
 
 		$options = self::get_css_optimize_options();
@@ -187,9 +186,9 @@ class VkCssOptimize {
 	 */
 	public static function get_css_optimize_options_default() {
 		$vk_css_optimize_options_default = array(
-			'tree_shaking'     => '',
-			'preload'          => '',
-			'tree_shaking_css' => array(), // $wp_styles->registered にある handle から取得したCSS情報
+			'tree_shaking'      => '',
+			'preload'           => '',
+			'tree_shaking_css'  => array(), // $wp_styles->registered にある handle から取得したCSS情報
 			'simple_minify_css' => array(), // $wp_styles->registered にある handle から取得したCSS情報
 		);
 		return apply_filters( 'vk_css_optimize_options_default', $vk_css_optimize_options_default );
@@ -301,7 +300,7 @@ class VkCssOptimize {
 
 	/**
 	 * ハンドル名からCSSのパスなどを取得してオプションに保存する
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function css_simple_minify_option() {
@@ -311,18 +310,18 @@ class VkCssOptimize {
 
 		$options             = self::get_css_optimize_options();
 		$tree_shaking_array  = self::css_tree_shaking_array();
-		$simple_minify_array = self::css_simple_minify_array(); 
+		$simple_minify_array = self::css_simple_minify_array();
 
-		// tree_shaking用の情報を生成
+		// tree_shaking用の情報を生成.
 		foreach ( $tree_shaking_array as $css ) {
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}
 			if ( ! empty( $registerd[ $css ] ) ) {
-				$options['tree_shaking_css'][$css] = array(
+				$options['tree_shaking_css'][ $css ] = array(
 					'id'      => $css,
 					'url'     => $registerd[ $css ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換
+					// file_get_content で取得して処理するためCSSのURLをパスに変換.
 					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
 					'version' => $registerd[ $css ]->ver,
 					'args'    => $registerd[ $css ]->args,
@@ -336,10 +335,10 @@ class VkCssOptimize {
 				$css = $css['id'];
 			}
 			if ( ! empty( $registerd[ $css ] ) ) {
-				$options['simple_minify_css'][$css] = array(
+				$options['simple_minify_css'][ $css ] = array(
 					'id'      => $css,
 					'url'     => $registerd[ $css ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換
+					// file_get_content で取得して処理するためCSSのURLをパスに変換.
 					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
 					'version' => $registerd[ $css ]->ver,
 					'args'    => $registerd[ $css ]->args,
@@ -353,7 +352,7 @@ class VkCssOptimize {
 	/**
 	 * Change Buffer of HTML Document
 	 *
-	 * @param string $buffer Gotten HTML Document
+	 * @param string $buffer Gotten HTML Document.
 	 * @return $buffer
 	 */
 	public static function css_tree_shaking_buffer( $buffer ) {
@@ -373,7 +372,7 @@ class VkCssOptimize {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		// href の前のスペースが２つから１つになったので差分を修正
-		// (過去のWordPressバージョン対応（5.9くらい？ 6.3 くらいになったら削除OK）)
+		// (過去のWordPressバージョン対応（5.9くらい？ 6.3 くらいになったら削除OK）).
 		$buffer = str_replace(
 			'  href',
 			' href',
@@ -459,13 +458,13 @@ class VkCssOptimize {
 		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
 		$vk_css_simple_minify_array = $options['simple_minify_css'];
 
-		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );			
+		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );
 
 		// tree shaking がかかっているものはpreloadの除外リストに追加する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
 		foreach ( $vk_css_tree_shaking_array as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
+			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納.
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}
@@ -477,7 +476,7 @@ class VkCssOptimize {
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
 		foreach ( $vk_css_simple_minify_array as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
+			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納.
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}
