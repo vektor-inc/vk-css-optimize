@@ -1,4 +1,4 @@
-<?php //phpcs:ignore
+<?php
 /**
  * VK CSS Optimize
  *
@@ -40,6 +40,10 @@ class VkCssOptimize {
 	 * @param object $wp_customize : wp custommize object .
 	 */
 	public static function customize_register( $wp_customize ) {
+
+		require_once dirname( __FILE__ ) . '/CustomHtmlControl.php';
+		require_once dirname( __FILE__ ) . '/CustomTextControl.php';
+
 		global $prefix_customize_panel;
 		$wp_customize->add_section(
 			'css_optimize',
@@ -57,7 +61,7 @@ class VkCssOptimize {
 			)
 		);
 		$wp_customize->add_control(
-			new VK_Custom_Html_Control(
+			new CustomHtmlControl(
 				$wp_customize,
 				'tree_shaking_title',
 				array(
@@ -121,7 +125,7 @@ class VkCssOptimize {
 			)
 		);
 		$wp_customize->add_control(
-			new VK_Custom_Html_Control(
+			new CustomHtmlControl(
 				$wp_customize,
 				'css_preload_title',
 				array(
@@ -312,7 +316,7 @@ class VkCssOptimize {
 		$tree_shaking_array  = self::css_tree_shaking_array();
 		$simple_minify_array = self::css_simple_minify_array();
 
-		// tree_shaking用の情報を生成.
+		// tree_shaking用の情報を生成
 		foreach ( $tree_shaking_array as $css ) {
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
@@ -321,7 +325,7 @@ class VkCssOptimize {
 				$options['tree_shaking_css'][ $css ] = array(
 					'id'      => $css,
 					'url'     => $registerd[ $css ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換.
+					// file_get_content で取得して処理するためCSSのURLをパスに変換
 					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
 					'version' => $registerd[ $css ]->ver,
 					'args'    => $registerd[ $css ]->args,
@@ -338,7 +342,7 @@ class VkCssOptimize {
 				$options['simple_minify_css'][ $css ] = array(
 					'id'      => $css,
 					'url'     => $registerd[ $css ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換.
+					// file_get_content で取得して処理するためCSSのURLをパスに変換
 					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
 					'version' => $registerd[ $css ]->ver,
 					'args'    => $registerd[ $css ]->args,
@@ -352,7 +356,7 @@ class VkCssOptimize {
 	/**
 	 * Change Buffer of HTML Document
 	 *
-	 * @param string $buffer Gotten HTML Document.
+	 * @param string $buffer Gotten HTML Document
 	 * @return $buffer
 	 */
 	public static function css_tree_shaking_buffer( $buffer ) {
@@ -372,7 +376,7 @@ class VkCssOptimize {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		// href の前のスペースが２つから１つになったので差分を修正
-		// (過去のWordPressバージョン対応（5.9くらい？ 6.3 くらいになったら削除OK）).
+		// (過去のWordPressバージョン対応（5.9くらい？ 6.3 くらいになったら削除OK）)
 		$buffer = str_replace(
 			'  href',
 			' href',
@@ -464,7 +468,7 @@ class VkCssOptimize {
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
 		foreach ( $vk_css_tree_shaking_array as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納.
+			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}
@@ -476,7 +480,7 @@ class VkCssOptimize {
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
 		foreach ( $vk_css_simple_minify_array as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納.
+			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}

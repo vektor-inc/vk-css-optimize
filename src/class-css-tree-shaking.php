@@ -16,7 +16,7 @@ If you want to change this file, please change the original file.
  * License: GPLv2
  *
  */
-namespace celtislab\v2_1;
+namespace VektorInc\VK_CSS_Optimize;
 
 defined( 'ABSPATH' ) || exit;
 
