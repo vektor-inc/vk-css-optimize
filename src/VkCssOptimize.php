@@ -395,8 +395,8 @@ class VkCssOptimize {
 				$css = $wp_filesystem->get_contents( $path_name );
 			}
 
-			// ree shaking を実行して再格納 .
-			$css = celtislab\v2_1\CSS_tree_shaking::extended_minify( celtislab\v2_1\CSS_tree_shaking::simple_minify( $css ), $buffer );
+			// tree shaking を実行して再格納 .
+			$css = CSS_tree_shaking::extended_minify( CSS_tree_shaking::simple_minify( $css ), $buffer );
 
 			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
 			$buffer = str_replace(
@@ -424,7 +424,7 @@ class VkCssOptimize {
 				$css = $wp_filesystem->get_contents( $path_name );
 			}
 
-			$css = celtislab\v2_1\CSS_tree_shaking::simple_minify( $css );
+			$css = CSS_tree_shaking::simple_minify( $css );
 
 			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
 			$buffer = str_replace(
