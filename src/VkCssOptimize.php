@@ -394,8 +394,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_handles = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array  = $options['simple_minify_css'];
+		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
+		$vk_css_simple_minify_array = $options['simple_minify_css'];
 
 		// WP_Filesystem() が使えるように読み込み.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -411,7 +411,7 @@ class VkCssOptimize {
 		// CSS Tree Shaking //////////////////////////////////////////// .
 		// まずは $buffer から tree shaking で不要なCSSを削除.
 
-		foreach ( $vk_css_tree_shaking_handles as $vk_css_array ) {
+		foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
 
 			// 読み込むCSSファイルのパス.
 			$path_name = $vk_css_array['path'];
