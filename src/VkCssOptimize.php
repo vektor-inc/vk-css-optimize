@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.0.0
+ * @version 0.1.0
  */
 
 namespace VektorInc\VK_CSS_Optimize;
@@ -342,18 +342,15 @@ class VkCssOptimize {
 		$simple_minify_array  = self::css_simple_minify_array();
 
 		// tree_shaking用の情報を生成.
-		foreach ( $tree_shaking_handles as $css ) {
-			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
-				$css = $css['id'];
-			}
-			if ( ! empty( $registerd[ $css ] ) ) {
-				$options['tree_shaking_css'][ $css ] = array(
-					'id'      => $css,
-					'url'     => $registerd[ $css ]->src,
+		foreach ( $tree_shaking_handles as $css_handle ) {
+			if ( ! empty( $registerd[ $css_handle ] ) ) {
+				$options['tree_shaking_css'][ $css_handle ] = array(
+					'id'      => $css_handle,
+					'url'     => $registerd[ $css_handle ]->src,
 					// file_get_content で取得して処理するためCSSのURLをパスに変換.
-					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
-					'version' => $registerd[ $css ]->ver,
-					'args'    => $registerd[ $css ]->args,
+					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css_handle ]->src ),
+					'version' => $registerd[ $css_handle ]->ver,
+					'args'    => $registerd[ $css_handle ]->args,
 				);
 			}
 		}
@@ -410,7 +407,6 @@ class VkCssOptimize {
 
 		// CSS Tree Shaking //////////////////////////////////////////// .
 		// まずは $buffer から tree shaking で不要なCSSを削除.
-
 		foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
 
 			// 読み込むCSSファイルのパス.
