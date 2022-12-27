@@ -431,12 +431,30 @@ class VkCssOptimize {
 				$buffer
 			);
 
-			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
+			// ↓↓↓↓↓↓↓↓ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
+			// 旧バージョン CSS Optimize ライブラリ が他のプラグインなどで動作していて、preload が実行されている場合
+			// Preloadが有効だと以下のように書き換わっているので、Tree shaking が検出できずに効かなくなるので追加対応.
 			$buffer = str_replace(
-				'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '\' type=\'text/css\' media=\'all\' />',
+				'<link rel=\'preload\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' as=\'style\' onload="this.onload=null;this.rel=\'stylesheet\'"/>',
 				'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
 				$buffer
 			);
+			// Preloadが有効だとついでに以下も出力されるので削除.
+			$search = "<link rel='stylesheet' id='" . $vk_css_array['id'] . "-css' href='" . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . "' media='print' onload=\"this.media='all'; this.onload=null;\">\n";
+			$buffer = str_replace(
+				$search,
+				'',
+				$buffer
+			);
+			// ↑↑↑↑↑↑↑↑ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
+
+			// ↓↓↓↓↓↓↓↓↓↓↓ 必要性不明のためコメントアウト 2023.06.30 以降削除可
+			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
+			// $buffer = str_replace(
+			// 	'<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
+			// 	'',
+			// 	$buffer
+			// );
 
 		}
 
