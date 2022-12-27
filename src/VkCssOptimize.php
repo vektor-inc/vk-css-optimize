@@ -394,8 +394,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_handles = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array  = $options['simple_minify_css'];
+		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
+		$vk_css_simple_minify_array = $options['simple_minify_css'];
 
 		// WP_Filesystem() が使えるように読み込み.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -411,7 +411,7 @@ class VkCssOptimize {
 		// CSS Tree Shaking //////////////////////////////////////////// .
 		// まずは $buffer から tree shaking で不要なCSSを削除.
 
-		foreach ( $vk_css_tree_shaking_handles as $vk_css_array ) {
+		foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
 
 			// 読み込むCSSファイルのパス.
 			$path_name = $vk_css_array['path'];
@@ -431,12 +431,30 @@ class VkCssOptimize {
 				$buffer
 			);
 
-			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
+			// ↓↓↓↓↓↓↓↓ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
+			// 旧バージョン CSS Optimize ライブラリ が他のプラグインなどで動作していて、preload が実行されている場合
+			// Preloadが有効だと以下のように書き換わっているので、Tree shaking が検出できずに効かなくなるので追加対応.
 			$buffer = str_replace(
-				'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '\' type=\'text/css\' media=\'all\' />',
+				'<link rel=\'preload\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' as=\'style\' onload="this.onload=null;this.rel=\'stylesheet\'"/>',
 				'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
 				$buffer
 			);
+			// Preloadが有効だとついでに以下も出力されるので削除.
+			$search = "<link rel='stylesheet' id='" . $vk_css_array['id'] . "-css' href='" . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . "' media='print' onload=\"this.media='all'; this.onload=null;\">\n";
+			$buffer = str_replace(
+				$search,
+				'',
+				$buffer
+			);
+			// ↑↑↑↑↑↑↑↑ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
+
+			// ↓↓↓↓↓↓↓↓↓↓↓ 必要性不明のためコメントアウト 2023.06.30 以降削除可
+			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
+			// $buffer = str_replace(
+			// 	'<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
+			// 	'',
+			// 	$buffer
+			// );
 
 		}
 
