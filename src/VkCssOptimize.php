@@ -358,7 +358,7 @@ class VkCssOptimize {
 			}
 		}
 
-		// 圧縮用の情報を生成
+		// 圧縮用の情報を生成.
 		foreach ( $simple_minify_array as $css ) {
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
@@ -401,7 +401,7 @@ class VkCssOptimize {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		// href の前のスペースが２つから１つになったので差分を修正
-		// (過去のWordPressバージョン対応（5.9くらい？ 6.3 くらいになったら削除OK）)
+		// (過去のWordPressバージョン対応（5.9くらい？ 6.3 くらいになったら削除OK）).
 		$buffer = str_replace(
 			'  href',
 			' href',
@@ -505,7 +505,7 @@ class VkCssOptimize {
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
 		foreach ( $vk_css_simple_minify_array as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
+			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納.
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}
