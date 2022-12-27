@@ -381,7 +381,7 @@ class VkCssOptimize {
 	/**
 	 * Change Buffer of HTML Document
 	 *
-	 * @param string $buffer Gotten HTML Document
+	 * @param string $buffer Gotten HTML Document.
 	 * @return $buffer
 	 */
 	public static function css_tree_shaking_buffer( $buffer ) {
@@ -409,6 +409,7 @@ class VkCssOptimize {
 		);
 
 		// CSS Tree Shaking //////////////////////////////////////////// .
+		// まずは $buffer から tree shaking で不要なCSSを削除.
 
 		foreach ( $vk_css_tree_shaking_handles as $vk_css_array ) {
 
@@ -440,7 +441,7 @@ class VkCssOptimize {
 		}
 
 		// CSS Simply Minify //////////////////////////////////////////// .
-
+		// 続いて $buffer から simply minify で CSS を圧縮.
 		foreach ( $vk_css_simple_minify_array as $vk_css_array ) {
 
 			$path_name = $vk_css_array['path'];
