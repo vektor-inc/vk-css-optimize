@@ -566,5 +566,3 @@ class VkCssOptimize {
 	}
 
 }
-
-new VkCssOptimize();
