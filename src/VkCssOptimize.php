@@ -309,7 +309,7 @@ class VkCssOptimize {
 	 *
 	 * @return array $vk_css_tree_shaking_handles.
 	 */
-	public static function css_tree_shaking_array() {
+	public static function css_tree_shaking_handles() {
 		$vk_css_tree_shaking_handles = array();
 		$vk_css_tree_shaking_handles = apply_filters( 'vk_css_tree_shaking_handles', $vk_css_tree_shaking_handles );
 		return $vk_css_tree_shaking_handles;
@@ -337,12 +337,12 @@ class VkCssOptimize {
 		global $wp_styles;
 		$registerd = $wp_styles->registered;
 
-		$options             = self::get_css_optimize_options();
-		$tree_shaking_array  = self::css_tree_shaking_array();
-		$simple_minify_array = self::css_simple_minify_array();
+		$options              = self::get_css_optimize_options();
+		$tree_shaking_handles = self::css_tree_shaking_handles();
+		$simple_minify_array  = self::css_simple_minify_array();
 
-		// tree_shaking用の情報を生成
-		foreach ( $tree_shaking_array as $css ) {
+		// tree_shaking用の情報を生成.
+		foreach ( $tree_shaking_handles as $css ) {
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
 			}
@@ -350,7 +350,7 @@ class VkCssOptimize {
 				$options['tree_shaking_css'][ $css ] = array(
 					'id'      => $css,
 					'url'     => $registerd[ $css ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換
+					// file_get_content で取得して処理するためCSSのURLをパスに変換.
 					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
 					'version' => $registerd[ $css ]->ver,
 					'args'    => $registerd[ $css ]->args,
@@ -367,7 +367,7 @@ class VkCssOptimize {
 				$options['simple_minify_css'][ $css ] = array(
 					'id'      => $css,
 					'url'     => $registerd[ $css ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換
+					// file_get_content で取得して処理するためCSSのURLをパスに変換.
 					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
 					'version' => $registerd[ $css ]->ver,
 					'args'    => $registerd[ $css ]->args,
@@ -394,8 +394,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_handles  = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array = $options['simple_minify_css'];
+		$vk_css_tree_shaking_handles = $options['tree_shaking_css'];
+		$vk_css_simple_minify_array  = $options['simple_minify_css'];
 
 		// WP_Filesystem() が使えるように読み込み.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -484,8 +484,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_handles  = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array = $options['simple_minify_css'];
+		$vk_css_tree_shaking_handles = $options['tree_shaking_css'];
+		$vk_css_simple_minify_array  = $options['simple_minify_css'];
 
 		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );
 
