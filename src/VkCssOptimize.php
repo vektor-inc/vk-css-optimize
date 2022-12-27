@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.0.1
+ * @version 0.1.0
  */
 
 namespace VektorInc\VK_CSS_Optimize;
@@ -307,12 +307,12 @@ class VkCssOptimize {
 	 * Array of Apply Tree Shaking
 	 * Tree Shaking にかけるCSS情報の配列
 	 *
-	 * @return array $vk_css_tree_shaking_array.
+	 * @return array $vk_css_tree_shaking_handles.
 	 */
 	public static function css_tree_shaking_array() {
-		$vk_css_tree_shaking_array = array();
-		$vk_css_tree_shaking_array = apply_filters( 'vk_css_tree_shaking_array', $vk_css_tree_shaking_array );
-		return $vk_css_tree_shaking_array;
+		$vk_css_tree_shaking_handles = array();
+		$vk_css_tree_shaking_handles = apply_filters( 'vk_css_tree_shaking_handles', $vk_css_tree_shaking_handles );
+		return $vk_css_tree_shaking_handles;
 	}
 
 	/**
@@ -394,7 +394,7 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
+		$vk_css_tree_shaking_handles  = $options['tree_shaking_css'];
 		$vk_css_simple_minify_array = $options['simple_minify_css'];
 
 		// WP_Filesystem() が使えるように読み込み.
@@ -410,7 +410,7 @@ class VkCssOptimize {
 
 		// CSS Tree Shaking //////////////////////////////////////////// .
 
-		foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
+		foreach ( $vk_css_tree_shaking_handles as $vk_css_array ) {
 
 			// 読み込むCSSファイルのパス.
 			$path_name = $vk_css_array['path'];
@@ -484,7 +484,7 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
+		$vk_css_tree_shaking_handles  = $options['tree_shaking_css'];
 		$vk_css_simple_minify_array = $options['simple_minify_css'];
 
 		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );
@@ -492,7 +492,7 @@ class VkCssOptimize {
 		// tree shaking がかかっているものはpreloadの除外リストに追加する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
-		foreach ( $vk_css_tree_shaking_array as $css ) {
+		foreach ( $vk_css_tree_shaking_handles as $css ) {
 			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
 			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
 				$css = $css['id'];
