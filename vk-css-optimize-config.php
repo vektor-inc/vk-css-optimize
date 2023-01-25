@@ -2,45 +2,48 @@
 /**
  * VK CSS Tree Shaking Config
  *
- * @package Katawara
+ * @package Lightning
  */
+
+use VektorInc\VK_CSS_Optimize\VkCssOptimize;
+new VkCssOptimize();
 
 global $prefix_customize_panel;
-$prefix_customize_panel = '';
+$prefix_customize_panel = lightning_get_prefix_customize_panel();
 
 /**
- * Optimize CSS.
+ * Register tree shaking css handles
+ *
+ * @param array $vk_css_tree_shaking_handles : recieve array.
+ * @return array $vk_css_tree_shaking_handles : return modefied array.
  */
+function lightning_css_tree_shaking_handles( $vk_css_tree_shaking_handles ) {
 
-if ( ! class_exists( 'VK_CSS_Optimize' ) ) {
-	require_once dirname( __FILE__ ) . '/package/class-vk-css-optimize.php';
-}
-
-function Katawara_css_tree_shaking_array( $vk_css_tree_shaking_array ){
-	$Katawara_style_array = array(
-		'id'      => 'katawara-design-style',
-		'url'     => get_template_directory_uri() . '/assets/css/style.min.css',
-		'path'    => get_parent_theme_file_path( '/assets/css/style.min.css' ),
-		'version' => KATAWARA_THEME_VERSION,
+	$vk_css_tree_shaking_handles = array_merge(
+		$vk_css_tree_shaking_handles,
+		array(
+			'lightning-common-style',
+			'lightning-design-style',
+		)
 	);
-	array_push( $vk_css_tree_shaking_array, $Katawara_style_array );
-	return $vk_css_tree_shaking_array;
+	return $vk_css_tree_shaking_handles;
 }
-add_filter( 'vk_css_tree_shaking_array', 'Katawara_css_tree_shaking_array' );
-	
+add_filter( 'vk_css_tree_shaking_handles', 'lightning_css_tree_shaking_handles' );
+
+
 /**
- * 
  * CSS Tree Shaking Exclude
  *
  * @param array $inidata CSS Tree Shaking Exclude Paramator.
  */
-function katawara_css_tree_shaking_exclude_class( $inidata ) {
+function lightning_css_tree_shaking_exclude_class( $inidata ) {
 	$exclude_classes_array = array(
 		'customize-partial-edit-shortcut',
+		'customize-partial-edit-shortcuts-shown',
+		'vk_post',
 		'card',
 		'card-noborder',
 		'card-imageRound',
-		'vk_posts',
 		'vk_post-col-xs-12',
 		'vk_post-col-xs-6',
 		'vk_post-col-xs-4',
@@ -67,4 +70,19 @@ function katawara_css_tree_shaking_exclude_class( $inidata ) {
 
 	return $inidata;
 }
-add_filter( 'css_tree_shaking_exclude', 'katawara_css_tree_shaking_exclude_class' );
+add_filter( 'css_tree_shaking_exclude', 'lightning_css_tree_shaking_exclude_class' );
+
+/**
+ * CSS Optimize option default
+ *
+ * @param array $vk_css_optimize_options_default : recieve array.
+ * @return array $vk_css_optimize_options_default : return modefied array.
+ */
+function lightning_css_optimize_options_default( $vk_css_optimize_options_default ) {
+	$vk_css_optimize_options_default = array(
+		'tree_shaking' => 'active',
+		'preload'      => '',
+	);
+	return $vk_css_optimize_options_default;
+}
+add_filter( 'vk_css_optimize_options_default', 'lightning_css_optimize_options_default' );

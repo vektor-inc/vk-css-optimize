@@ -20,7 +20,6 @@ class VkCssOptimize {
 	 */
 	public function __construct() {
 		add_action( 'customize_register', array( __CLASS__, 'customize_register' ) );
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'css_simple_minify_option' ), 2147483647 );
 		add_filter( 'css_tree_shaking_exclude', array( __CLASS__, 'tree_shaking_exclude' ) );
 
 		$options = self::get_css_optimize_options();
@@ -217,8 +216,6 @@ class VkCssOptimize {
 		$vk_css_optimize_options_default = array(
 			'tree_shaking'      => '',
 			'preload'           => '',
-			'tree_shaking_css'  => array(), // $wp_styles->registered にある handle から取得したCSS情報
-			'simple_minify_css' => array(), // $wp_styles->registered にある handle から取得したCSS情報
 		);
 		return apply_filters( 'vk_css_optimize_options_default', $vk_css_optimize_options_default );
 	}
@@ -276,6 +273,17 @@ class VkCssOptimize {
 				}
 			}
 		}
+
+		// Tree Shaking 対象の CSS をオプションに保存する必要性があるのか不明だったのでオプションを削除
+		if ( $vk_css_optimize_options['tree_shaking_css'] ) {
+			unset( $vk_css_optimize_options['tree_shaking_css'] );
+		}
+
+		// 単純縮小対象の CSS をオプションに保存する必要性があるのか不明だったのでオプションを削除
+		if ( $vk_css_optimize_options['simple_minify_css'] ) {
+			unset( $vk_css_optimize_options['simple_minify_css'] );
+		}
+
 		$vk_css_optimize_options = wp_parse_args( $vk_css_optimize_options, $vk_css_optimize_options_default );
 		if (
 			! isset( $vk_css_optimize_options['tree_shaking'] ) ||
@@ -321,30 +329,30 @@ class VkCssOptimize {
 	 *
 	 * @return array $vk_css_simple_minify_array
 	 */
-	public static function css_simple_minify_array() {
+	public static function css_simple_minify_handles() {
 		$vk_css_simple_minify_array = array();
-		$vk_css_simple_minify_array = apply_filters( 'vk_css_simple_minify_array', $vk_css_simple_minify_array );
+		$vk_css_simple_minify_array = apply_filters( 'vk_css_simple_minify_handles', $vk_css_simple_minify_array );
 		return $vk_css_simple_minify_array;
 	}
 
 	/**
-	 * ハンドル名からCSSのパスなどを取得してオプションに保存する
+	 * ハンドル名からCSSのパスなどを配列に格納
 	 *
 	 * @return void
 	 */
-	public static function css_simple_minify_option() {
+	public static function get_css_minify_array() {
 
 		global $wp_styles;
 		$registerd = $wp_styles->registered;
 
-		$options              = self::get_css_optimize_options();
-		$tree_shaking_handles = self::css_tree_shaking_handles();
-		$simple_minify_array  = self::css_simple_minify_array();
+		$tree_shaking_handles   = self::css_tree_shaking_handles();
+		$simple_minify_handles  = self::css_simple_minify_handles();
+		$css_minify_array       = array();
 
 		// tree_shaking用の情報を生成.
 		foreach ( $tree_shaking_handles as $css_handle ) {
 			if ( ! empty( $registerd[ $css_handle ] ) ) {
-				$options['tree_shaking_css'][ $css_handle ] = array(
+				$css_minify_array['tree_shaking_css'][ $css_handle ] = array(
 					'id'      => $css_handle,
 					'url'     => $registerd[ $css_handle ]->src,
 					// file_get_content で取得して処理するためCSSのURLをパスに変換.
@@ -356,23 +364,21 @@ class VkCssOptimize {
 		}
 
 		// 圧縮用の情報を生成.
-		foreach ( $simple_minify_array as $css ) {
-			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
-				$css = $css['id'];
-			}
-			if ( ! empty( $registerd[ $css ] ) ) {
-				$options['simple_minify_css'][ $css ] = array(
-					'id'      => $css,
-					'url'     => $registerd[ $css ]->src,
+		foreach ( $simple_minify_handles as $css_handle ) {
+			if ( ! empty( $registerd[ $css_handle ] ) ) {
+				$css_minify_array['simple_minify_css'][ $css_handle ] = array(
+					'id'      => $css_handle,
+					'url'     => $registerd[ $css_handle ]->src,
 					// file_get_content で取得して処理するためCSSのURLをパスに変換.
-					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css ]->src ),
-					'version' => $registerd[ $css ]->ver,
-					'args'    => $registerd[ $css ]->args,
+					'path'    => str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $registerd[ $css_handle ]->src ),
+					'version' => $registerd[ $css_handle ]->ver,
+					'args'    => $registerd[ $css_handle ]->args,
 				);
 			}
 		}
 
-		update_option( 'vk_css_optimize_options', $options );
+		return $css_minify_array;
+		
 	}
 
 	/**
@@ -383,7 +389,7 @@ class VkCssOptimize {
 	 */
 	public static function css_tree_shaking_buffer( $buffer ) {
 
-		$options = self::get_css_optimize_options();
+		$css_minify_array = self::get_css_minify_array();
 
 		// Lode Modules.
 		// Tree shaking モジュール読み込み .
@@ -391,8 +397,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array = $options['simple_minify_css'];
+		$vk_css_tree_shaking_array  = $css_minify_array['tree_shaking_css'];
+		$vk_css_simple_minify_array = $css_minify_array['simple_minify_css'];
 
 		// WP_Filesystem() が使えるように読み込み.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -495,37 +501,25 @@ class VkCssOptimize {
 	 */
 	public static function css_preload( $tag, $handle, $href, $media ) {
 
-		$options = self::get_css_optimize_options();
-
-		// Load CSS Arrays
-		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_handles = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array  = $options['simple_minify_css'];
+		$tree_shaking_handles   = self::css_tree_shaking_handles();
+		$simple_minify_handles  = self::css_simple_minify_handles();
 
 		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );
 
 		// tree shaking がかかっているものはpreloadの除外リストに追加する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
-		foreach ( $vk_css_tree_shaking_handles as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納
-			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
-				$css = $css['id'];
-			}
+		foreach ( $tree_shaking_handles as $css_handle ) {
 			// ハンドル名をプリロード除外リストに追加.
-			$exclude_handles[] = $css;
+			$exclude_handles[] = $css_handle;
 		}
 
 		// Simple Minify がかかっているものはpreloadから除外する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
-		foreach ( $vk_css_simple_minify_array as $css ) {
-			// 利用側が古いバージョンの場合 : $cssは配列になるので、ハンドル名だけ取得して格納.
-			if ( is_array( $css ) && ! empty( $css['id'] ) ) {
-				$css = $css['id'];
-			}
+		foreach ( $simple_minify_handles as $css_handle ) {
 			// ハンドル名をプリロード除外リストに追加.
-			$exclude_handles[] = $css;
+			$exclude_handles[] = $css_handle;
 		}
 
 		// プリロードから除外するCSSハンドルが option で保存されている場合.
