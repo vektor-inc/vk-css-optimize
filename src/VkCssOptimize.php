@@ -275,7 +275,7 @@ class VkCssOptimize {
 		}
 
 		// オプション値に格納するのは不要と見て削除
-		if ( $vk_css_optimize_options['tree_shaking_css'] || $vk_css_optimize_options['simple_minify_css' ] ) {
+		if ( ! empty( $vk_css_optimize_options['tree_shaking_css'] ) || ! empty( $vk_css_optimize_options['simple_minify_css' ] ) ) {
 			unset( $vk_css_optimize_options['tree_shaking_css'] );
 			unset( $vk_css_optimize_options['simple_minify_css' ] );
 		}
