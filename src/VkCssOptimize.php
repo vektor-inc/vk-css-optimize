@@ -224,7 +224,12 @@ class VkCssOptimize {
 	 * CSS Optimize Options
 	 * 古いオプションやデフォルト値を結合して返す
 	 *
-	 * @return array $vk_css_optimize_options .
+	 * @return array{
+	 *   tree_shaking: string,
+	 *   tree_shaking_class_exclude: string,
+	 *   preload: string
+	 *   preload_handle_exclude: string
+	 * } $vk_css_optimize_options.
 	 */
 	public static function get_css_optimize_options() {
 
@@ -278,9 +283,12 @@ class VkCssOptimize {
 		}
 
 		// オプション値に格納するのは不要と見て削除
-		if ( ! empty( $vk_css_optimize_options['tree_shaking_css'] ) || ! empty( $vk_css_optimize_options['simple_minify_css' ] ) ) {
+		// ここで削除している tree_shaking_css や simple_minify_css は古いバージョンで保存されたもので、
+		// 不要になったため。2023.6末以降あたり削除で良いと思われる
+		// @since 0.2.0 .
+		if ( ! empty( $vk_css_optimize_options['tree_shaking_css'] ) || ! empty( $vk_css_optimize_options['simple_minify_css'] ) ) {
 			unset( $vk_css_optimize_options['tree_shaking_css'] );
-			unset( $vk_css_optimize_options['simple_minify_css' ] );
+			unset( $vk_css_optimize_options['simple_minify_css'] );
 		}
 
 		$vk_css_optimize_options = wp_parse_args( $vk_css_optimize_options, $vk_css_optimize_options_default );
