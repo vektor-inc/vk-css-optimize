@@ -233,7 +233,7 @@ class VkCssOptimize {
 
 		$theme_textdomain = wp_get_theme()->get( 'TextDomain' );
 
-		// CSS高速化を各テーマなどで保存していた頃の互換処理.
+		// CSS高速化を各テーマなどのoption側で保存していた頃の互換処理.
 		if ( 'lightning' === $theme_textdomain || 'lightning-pro' === $theme_textdomain ) {
 			$old_options = get_option( 'lightning_theme_options' );
 		} elseif ( 'katawara' === $theme_textdomain ) {
@@ -249,6 +249,7 @@ class VkCssOptimize {
 		if ( ! isset( $vk_css_optimize_options['tree_shaking'] ) ) {
 			// 古い設定がある場合（互換処理）.
 			if ( isset( $old_options['optimize_css'] ) ) {
+				// 古い設定でCSS最適化が有効だった場合.
 				if ( 'optomize-all-css' === $old_options['optimize_css'] || 'tree-shaking' === $old_options['optimize_css'] ) {
 					$vk_css_optimize_options['tree_shaking'] = 'active';
 				} else {
@@ -261,6 +262,7 @@ class VkCssOptimize {
 		if ( ! isset( $vk_css_optimize_options['tree_shaking_class_exclude'] ) ) {
 			// 古いoption値で除外指定が存在する場合（互換処理）.
 			if ( ! empty( $old_options['tree_shaking_class_exclude'] ) ) {
+				// 古いoption値に保存されている除外指定を新しいoption値に格納.
 				$vk_css_optimize_options['tree_shaking_class_exclude'] = esc_html( $old_options['tree_shaking_class_exclude'] );
 			}
 		}
@@ -269,6 +271,7 @@ class VkCssOptimize {
 		if ( ! isset( $vk_css_optimize_options['preload'] ) ) {
 			// 古いoption値でプリロード設定が存在する場合（互換処理）.
 			if ( isset( $old_options['optimize_css'] ) ) {
+				// 古いoption値に保存されているプリロード指定を新しいoption値に格納.
 				if ( 'optomize-all-css' === $old_options['optimize_css'] ) {
 					$vk_css_optimize_options['preload'] = 'active';
 				} else {
@@ -277,6 +280,7 @@ class VkCssOptimize {
 			}
 		}
 		$vk_css_optimize_options = wp_parse_args( $vk_css_optimize_options, $vk_css_optimize_options_default );
+
 		if (
 			! isset( $vk_css_optimize_options['tree_shaking'] ) ||
 			! isset( $vk_css_optimize_options['tree_shaking_class_exclude'] ) ||
