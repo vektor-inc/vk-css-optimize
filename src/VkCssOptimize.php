@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.1.0
+ * @version 0.2.0
  */
 
 namespace VektorInc\VK_CSS_Optimize;
@@ -20,7 +20,6 @@ class VkCssOptimize {
 	 */
 	public function __construct() {
 		add_action( 'customize_register', array( __CLASS__, 'customize_register' ) );
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'css_simple_minify_option' ), 2147483647 );
 		add_filter( 'css_tree_shaking_exclude', array( __CLASS__, 'tree_shaking_exclude' ) );
 
 		$options = self::get_css_optimize_options();
@@ -215,10 +214,8 @@ class VkCssOptimize {
 	 */
 	public static function get_css_optimize_options_default() {
 		$vk_css_optimize_options_default = array(
-			'tree_shaking'      => '',
-			'preload'           => '',
-			'tree_shaking_css'  => array(), // $wp_styles->registered にある handle から取得したCSS情報
-			'simple_minify_css' => array(), // $wp_styles->registered にある handle から取得したCSS情報
+			'tree_shaking' => '',
+			'preload'      => '',
 		);
 		return apply_filters( 'vk_css_optimize_options_default', $vk_css_optimize_options_default );
 	}
@@ -227,7 +224,12 @@ class VkCssOptimize {
 	 * CSS Optimize Options
 	 * 古いオプションやデフォルト値を結合して返す
 	 *
-	 * @return array $vk_css_optimize_options .
+	 * @return array{
+	 *   tree_shaking: string,
+	 *   tree_shaking_class_exclude: string,
+	 *   preload: string
+	 *   preload_handle_exclude: string
+	 * } $vk_css_optimize_options.
 	 */
 	public static function get_css_optimize_options() {
 
@@ -279,6 +281,16 @@ class VkCssOptimize {
 				}
 			}
 		}
+
+		// オプション値に格納するのは不要と見て削除
+		// ここで削除している tree_shaking_css や simple_minify_css は古いバージョンで保存されたもので、
+		// 不要になったため。2023.6末以降あたり削除で良いと思われる
+		// @since 0.2.0 .
+		if ( ! empty( $vk_css_optimize_options['tree_shaking_css'] ) || ! empty( $vk_css_optimize_options['simple_minify_css'] ) ) {
+			unset( $vk_css_optimize_options['tree_shaking_css'] );
+			unset( $vk_css_optimize_options['simple_minify_css'] );
+		}
+
 		$vk_css_optimize_options = wp_parse_args( $vk_css_optimize_options, $vk_css_optimize_options_default );
 
 		if (
@@ -336,19 +348,19 @@ class VkCssOptimize {
 	 *
 	 * @return void
 	 */
-	public static function css_simple_minify_option() {
+	public static function get_css_minify_array() {
 
 		global $wp_styles;
 		$registerd = $wp_styles->registered;
 
-		$options                = self::get_css_optimize_options();
-		$tree_shaking_handles   = self::css_tree_shaking_handles();
-		$simple_minify_handles  = self::css_simple_minify_handles();
+		$options               = array();
+		$tree_shaking_handles  = self::css_tree_shaking_handles();
+		$simple_minify_handles = self::css_simple_minify_handles();
 
 		// tree_shaking用の情報を生成.
 		foreach ( $tree_shaking_handles as $css_handle ) {
 			if ( ! empty( $registerd[ $css_handle ] ) ) {
-				$options['tree_shaking_css'][ $css_handle ] = array(
+				$css_array['tree_shaking_css'][ $css_handle ] = array(
 					'id'      => $css_handle,
 					'url'     => $registerd[ $css_handle ]->src,
 					// file_get_content で取得して処理するためCSSのURLをパスに変換.
@@ -373,7 +385,7 @@ class VkCssOptimize {
 			}
 		}
 
-		update_option( 'vk_css_optimize_options', $options );
+		return $css_array;
 	}
 
 	/**
@@ -384,7 +396,7 @@ class VkCssOptimize {
 	 */
 	public static function css_tree_shaking_buffer( $buffer ) {
 
-		$options = self::get_css_optimize_options();
+		$css_array = self::get_css_minify_array();
 
 		// Lode Modules.
 		// Tree shaking モジュール読み込み .
@@ -392,8 +404,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$vk_css_tree_shaking_array  = $options['tree_shaking_css'];
-		$vk_css_simple_minify_array = $options['simple_minify_css'];
+		$vk_css_tree_shaking_array  = $css_array['tree_shaking_css'];
+		$vk_css_simple_minify_array = $css_array['simple_minify_css'];
 
 		// WP_Filesystem() が使えるように読み込み.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -448,9 +460,9 @@ class VkCssOptimize {
 			// ↓↓↓↓↓↓↓↓↓↓↓ 必要性不明のためコメントアウト 2023.06.30 以降削除可
 			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
 			// $buffer = str_replace(
-			// 	'<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
-			// 	'',
-			// 	$buffer
+			// '<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
+			// '',
+			// $buffer
 			// );
 
 		}
@@ -498,8 +510,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$tree_shaking_handles   = self::css_tree_shaking_handles();
-		$simple_minify_handles  = self::css_simple_minify_handles();
+		$tree_shaking_handles  = self::css_tree_shaking_handles();
+		$simple_minify_handles = self::css_simple_minify_handles();
 
 		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );
 
@@ -514,7 +526,7 @@ class VkCssOptimize {
 		// Simple Minify がかかっているものはpreloadから除外する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
-		foreach ($simple_minify_handles as $css_handles ) {
+		foreach ( $simple_minify_handles as $css_handles ) {
 			// ハンドル名をプリロード除外リストに追加.
 			$exclude_handles[] = $css_handles;
 		}
