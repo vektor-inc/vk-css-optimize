@@ -214,8 +214,8 @@ class VkCssOptimize {
 	 */
 	public static function get_css_optimize_options_default() {
 		$vk_css_optimize_options_default = array(
-			'tree_shaking'      => '',
-			'preload'           => '',
+			'tree_shaking' => '',
+			'preload'      => '',
 		);
 		return apply_filters( 'vk_css_optimize_options_default', $vk_css_optimize_options_default );
 	}
@@ -353,9 +353,9 @@ class VkCssOptimize {
 		global $wp_styles;
 		$registerd = $wp_styles->registered;
 
-		$options                = array();
-		$tree_shaking_handles   = self::css_tree_shaking_handles();
-		$simple_minify_handles  = self::css_simple_minify_handles();
+		$options               = array();
+		$tree_shaking_handles  = self::css_tree_shaking_handles();
+		$simple_minify_handles = self::css_simple_minify_handles();
 
 		// tree_shaking用の情報を生成.
 		foreach ( $tree_shaking_handles as $css_handle ) {
@@ -460,9 +460,9 @@ class VkCssOptimize {
 			// ↓↓↓↓↓↓↓↓↓↓↓ 必要性不明のためコメントアウト 2023.06.30 以降削除可
 			// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
 			// $buffer = str_replace(
-			// 	'<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
-			// 	'',
-			// 	$buffer
+			// '<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
+			// '',
+			// $buffer
 			// );
 
 		}
@@ -510,8 +510,8 @@ class VkCssOptimize {
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
-		$tree_shaking_handles   = self::css_tree_shaking_handles();
-		$simple_minify_handles  = self::css_simple_minify_handles();
+		$tree_shaking_handles  = self::css_tree_shaking_handles();
+		$simple_minify_handles = self::css_simple_minify_handles();
 
 		$exclude_handles = array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general' );
 
@@ -526,7 +526,7 @@ class VkCssOptimize {
 		// Simple Minify がかかっているものはpreloadから除外する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
-		foreach ($simple_minify_handles as $css_handles ) {
+		foreach ( $simple_minify_handles as $css_handles ) {
 			// ハンドル名をプリロード除外リストに追加.
 			$exclude_handles[] = $css_handles;
 		}
