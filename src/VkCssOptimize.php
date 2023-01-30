@@ -544,7 +544,7 @@ class VkCssOptimize {
 		// クリティカルじゃないCSS（tree shakingにかけているもの以外）をpreload .
 		if ( ! in_array( $handle, $exclude_handles ) ) {
 			// preload を追加する.
-			$tag  = "<link rel='preload' id='" . $handle . "-css' href='" . $href . "' as='style' onload=\"this.onload=null;this.rel='stylesheet'\"/>\n";
+			$tag  = "<link rel='preload' id='" . $handle . "-css-preload' href='" . $href . "' as='style' onload=\"this.onload=null;this.rel='stylesheet'\"/>\n";
 			$tag .= "<link rel='stylesheet' id='" . $handle . "-css' href='" . $href . "' media='print' onload=\"this.media='all'; this.onload=null;\">\n";
 		}
 
