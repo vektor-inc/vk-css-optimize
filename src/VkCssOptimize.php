@@ -353,7 +353,10 @@ class VkCssOptimize {
 		global $wp_styles;
 		$registerd = $wp_styles->registered;
 
-		$options               = array();
+		$css_array             = array(
+			'tree_shaking_css'  => array(),
+			'simple_minify_css' => array(),
+		);
 		$tree_shaking_handles  = self::css_tree_shaking_handles();
 		$simple_minify_handles = self::css_simple_minify_handles();
 
@@ -374,7 +377,7 @@ class VkCssOptimize {
 		// 圧縮用の情報を生成.
 		foreach ( $simple_minify_handles as $css_handle ) {
 			if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
-				$options['simple_minify_css'][ $css_handle ] = array(
+				$css_array['simple_minify_css'][ $css_handle ] = array(
 					'id'      => $css_handle,
 					'url'     => $registerd[ $css_handle ]->src,
 					// file_get_content で取得して処理するためCSSのURLをパスに変換.
