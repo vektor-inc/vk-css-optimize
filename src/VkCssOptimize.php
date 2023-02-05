@@ -1,4 +1,4 @@
-<?php
+<?php  // phpcs:ignore
 /**
  * VK CSS Optimize
  *
@@ -361,30 +361,34 @@ class VkCssOptimize {
 		$simple_minify_handles = self::css_simple_minify_handles();
 
 		// tree_shaking用の情報を生成.
-		foreach ( $tree_shaking_handles as $css_handle ) {
-			if ( ! empty( $registerd[ $css_handle ] ) && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) {
-				$css_array['tree_shaking_css'][ $css_handle ] = array(
-					'id'      => $css_handle,
-					'url'     => $registerd[ $css_handle ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換.
-					'path'    => str_replace( site_url(), ABSPATH, $registerd[ $css_handle ]->src ),
-					'version' => $registerd[ $css_handle ]->ver,
-					'args'    => $registerd[ $css_handle ]->args,
-				);
+		if ( $tree_shaking_handles && is_array( $tree_shaking_handles ) ) {
+			foreach ( $tree_shaking_handles as $css_handle ) {
+				if ( ! empty( $registerd[ $css_handle ] ) && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) {
+					$css_array['tree_shaking_css'][ $css_handle ] = array(
+						'id'      => $css_handle,
+						'url'     => $registerd[ $css_handle ]->src,
+						// file_get_content で取得して処理するためCSSのURLをパスに変換.
+						'path'    => str_replace( site_url(), ABSPATH, $registerd[ $css_handle ]->src ),
+						'version' => $registerd[ $css_handle ]->ver,
+						'args'    => $registerd[ $css_handle ]->args,
+					);
+				}
 			}
 		}
 
 		// 圧縮用の情報を生成.
-		foreach ( $simple_minify_handles as $css_handle ) {
-			if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
-				$css_array['simple_minify_css'][ $css_handle ] = array(
-					'id'      => $css_handle,
-					'url'     => $registerd[ $css_handle ]->src,
-					// file_get_content で取得して処理するためCSSのURLをパスに変換.
-					'path'    => str_replace( site_url(), ABSPATH, $registerd[ $css_handle ]->src ),
-					'version' => $registerd[ $css_handle ]->ver,
-					'args'    => $registerd[ $css_handle ]->args,
-				);
+		if ( $simple_minify_handles && is_array( $simple_minify_handles ) ) {
+			foreach ( $simple_minify_handles as $css_handle ) {
+				if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
+					$css_array['simple_minify_css'][ $css_handle ] = array(
+						'id'      => $css_handle,
+						'url'     => $registerd[ $css_handle ]->src,
+						// file_get_content で取得して処理するためCSSのURLをパスに変換.
+						'path'    => str_replace( site_url(), ABSPATH, $registerd[ $css_handle ]->src ),
+						'version' => $registerd[ $css_handle ]->ver,
+						'args'    => $registerd[ $css_handle ]->args,
+					);
+				}
 			}
 		}
 
@@ -421,7 +425,7 @@ class VkCssOptimize {
 				WP_Filesystem( $creds );
 			} else {
 				WP_Filesystem();
-			}			
+			}
 		}
 
 		// href の前のスペースが２つから１つになったので差分を修正
@@ -434,85 +438,89 @@ class VkCssOptimize {
 
 		// CSS Tree Shaking //////////////////////////////////////////// .
 		// まずは $buffer から tree shaking で不要なCSSを削除.
-		foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
+		if ( $vk_css_tree_shaking_array && is_array( $vk_css_tree_shaking_array ) ) {
+			foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
 
-			// CSS を初期化
-			$css = '';
+				// CSS を初期化.
+				$css = '';
 
-			// 読み込むCSSファイルのパス.
-			$path_name = $vk_css_array['path'];
-			if ( ! empty( $wp_filesystem ) ) {
-				$css = $wp_filesystem->get_contents( $path_name );
-			}
+				// 読み込むCSSファイルのパス.
+				$path_name = $vk_css_array['path'];
+				if ( ! empty( $wp_filesystem ) ) {
+					$css = $wp_filesystem->get_contents( $path_name );
+				}
 
-			// CSS の中身が取得できた場合のみ Tree Shaking を反映する
-			if ( ! empty( $css ) ) {
-				// tree shaking を実行して再格納 .
-				$css = CSS_tree_shaking::extended_minify( CSS_tree_shaking::simple_minify( $css ), $buffer );
+				// CSS の中身が取得できた場合のみ Tree Shaking を反映する
+				if ( ! empty( $css ) ) {
+					// tree shaking を実行して再格納 .
+					$css = CSS_tree_shaking::extended_minify( CSS_tree_shaking::simple_minify( $css ), $buffer );
 
-				// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
-				$buffer = str_replace(
-					'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' type=\'text/css\' media=\'all\' />',
-					'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-					$buffer
-				);
+					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
+					$buffer = str_replace(
+						'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' type=\'text/css\' media=\'all\' />',
+						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
+						$buffer
+					);
 
-				// ↓↓↓↓↓↓↓↓ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
-				// 旧バージョン CSS Optimize ライブラリ が他のプラグインなどで動作していて、preload が実行されている場合
-				// Preloadが有効だと以下のように書き換わっているので、Tree shaking が検出できずに効かなくなるので追加対応.
-				$buffer = str_replace(
-					'<link rel=\'preload\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' as=\'style\' onload="this.onload=null;this.rel=\'stylesheet\'"/>',
-					'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-					$buffer
-				);
-				// Preloadが有効だとついでに以下も出力されるので削除.
-				$search = "<link rel='stylesheet' id='" . $vk_css_array['id'] . "-css' href='" . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . "' media='print' onload=\"this.media='all'; this.onload=null;\">\n";
-				$buffer = str_replace(
-					$search,
-					'',
-					$buffer
-				);
-				// ↑↑↑↑↑↑↑↑ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
+					// ↓↓↓↓↓↓↓↓ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
+					// 旧バージョン CSS Optimize ライブラリ が他のプラグインなどで動作していて、preload が実行されている場合
+					// Preloadが有効だと以下のように書き換わっているので、Tree shaking が検出できずに効かなくなるので追加対応.
+					$buffer = str_replace(
+						'<link rel=\'preload\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' as=\'style\' onload="this.onload=null;this.rel=\'stylesheet\'"/>',
+						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
+						$buffer
+					);
+					// Preloadが有効だとついでに以下も出力されるので削除.
+					$search = "<link rel='stylesheet' id='" . $vk_css_array['id'] . "-css' href='" . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . "' media='print' onload=\"this.media='all'; this.onload=null;\">\n";
+					$buffer = str_replace(
+						$search,
+						'',
+						$buffer
+					);
+					// ↑↑↑↑↑↑↑↑ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
 
-				// ↓↓↓↓↓↓↓↓↓↓↓ 必要性不明のためコメントアウト 2023.06.30 以降削除可
-				// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
-				// $buffer = str_replace(
-				// '<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
-				// '',
-				// $buffer
-				// );
+					// ↓↓↓↓↓↓↓↓↓↓↓ 必要性不明のためコメントアウト 2023.06.30 以降削除可
+					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
+					// $buffer = str_replace(
+					// '<link rel=\'stylesheet\' id=\'' . $handle . '-css\' href=\'' . $href . '\' media=\'print\' onload=\"this.media=\'all\'; this.onload=null;\">',
+					// '',
+					// $buffer
+					// );
+				}
 			}
 		}
 
 		// CSS Simply Minify //////////////////////////////////////////// .
 		// 続いて $buffer から simply minify で CSS を圧縮.
-		foreach ( $vk_css_simple_minify_array as $vk_css_array ) {
+		if ( $vk_css_simple_minify_array && is_array( $vk_css_simple_minify_array ) ) {
+			foreach ( $vk_css_simple_minify_array as $vk_css_array ) {
 
-			// CSS を初期化
-			$css = '';
+				// CSS を初期化.
+				$css = '';
 
-			// 読み込むCSSファイルのパス.
-			$path_name = $vk_css_array['path'];
-			if ( ! empty( $wp_filesystem ) ) {
-				$css = $wp_filesystem->get_contents( $path_name );
-			}
+				// 読み込むCSSファイルのパス.
+				$path_name = $vk_css_array['path'];
+				if ( ! empty( $wp_filesystem ) ) {
+					$css = $wp_filesystem->get_contents( $path_name );
+				}
 
-			// CSS の中身が取得できた場合のみ Simply Minify を反映する
-			if ( ! empty( $css ) ) {
-				$css = CSS_tree_shaking::simple_minify( $css );
+				// CSS の中身が取得できた場合のみ Simply Minify を反映する.
+				if ( ! empty( $css ) ) {
+					$css = CSS_tree_shaking::simple_minify( $css );
 
-				// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
-				$buffer = str_replace(
-					'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' type=\'text/css\' media=\'all\' />',
-					'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-					$buffer
-				);
-				// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
-				$buffer = str_replace(
-					'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '\' type=\'text/css\' media=\'all\' />',
-					'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-					$buffer
-				);
+					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
+					$buffer = str_replace(
+						'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' type=\'text/css\' media=\'all\' />',
+						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
+						$buffer
+					);
+					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
+					$buffer = str_replace(
+						'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '\' type=\'text/css\' media=\'all\' />',
+						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
+						$buffer
+					);
+				}
 			}
 		}
 
