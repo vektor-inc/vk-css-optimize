@@ -35,9 +35,13 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
+0.2.0
+[ 不具合修正 ] PHP Warning 修正
+[ その他 ] KUSANAGI 対応調整
+
 0.1.0
 [ 仕様変更 ] ハンドルをオプションに保存する処理を廃止 / 変数名変更リファクタリング
-[ そのほか ] Tree Shaking アップデート 2.2.0
+[ その他 ] Tree Shaking アップデート 2.2.0
 
 0.0.0
 [ 仕様変更/不具合修正 ] 対象をハンドル名だけに変更したが、古いバージョンの tree shaking が存在すると、そっちが「idがねーぞ！」と Fatal error くらうのでフィルターフック名を変更
