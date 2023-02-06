@@ -377,7 +377,7 @@ class VkCssOptimize {
 		}
 
 		// 圧縮用の情報を生成.
-		if ( ! empty(  $simple_minify_handles ) && is_array( $simple_minify_handles ) ) {
+		if ( ! empty( $simple_minify_handles ) && is_array( $simple_minify_handles ) ) {
 			foreach ( $simple_minify_handles as $css_handle ) {
 				if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
 					$css_array['simple_minify_css'][ $css_handle ] = array(
@@ -418,7 +418,12 @@ class VkCssOptimize {
 		global $wp_filesystem;
 		if ( empty( $wp_filesystem ) ) {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
+			// KUSANAGI で FTP が使えない場合があるので、FTP が使える場合のみ認証を行う.
+			// request_filesystem_credentialsを使って認証情報を取得するように調整.
+			// KUSANAGI環境ではFTP_HOST、FTP_USERまでは初期設定でwp-config.phpに書き込まれているが、
+			// FTP_PASSは書き込まれていないので、FTP_PASSが定義されている場合のみ認証を行う.
 			if ( ( defined( 'FTP_HOST' ) && defined( 'FTP_USER' ) && defined( 'FTP_PASS' ) ) || is_admin() ) {
+				// https://developer.wordpress.org/reference/functions/request_filesystem_credentials/ .
 				$creds = request_filesystem_credentials( '', '', false, false, null );
 			}
 			if ( ! empty( $creds ) ) {
