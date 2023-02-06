@@ -361,7 +361,7 @@ class VkCssOptimize {
 		$simple_minify_handles = self::css_simple_minify_handles();
 
 		// tree_shaking用の情報を生成.
-		if ( $tree_shaking_handles && is_array( $tree_shaking_handles ) ) {
+		if ( ! empty( $tree_shaking_handles ) && is_array( $tree_shaking_handles ) ) {
 			foreach ( $tree_shaking_handles as $css_handle ) {
 				if ( ! empty( $registerd[ $css_handle ] ) && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) {
 					$css_array['tree_shaking_css'][ $css_handle ] = array(
@@ -377,7 +377,7 @@ class VkCssOptimize {
 		}
 
 		// 圧縮用の情報を生成.
-		if ( $simple_minify_handles && is_array( $simple_minify_handles ) ) {
+		if ( ! empty(  $simple_minify_handles ) && is_array( $simple_minify_handles ) ) {
 			foreach ( $simple_minify_handles as $css_handle ) {
 				if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
 					$css_array['simple_minify_css'][ $css_handle ] = array(
@@ -438,7 +438,7 @@ class VkCssOptimize {
 
 		// CSS Tree Shaking //////////////////////////////////////////// .
 		// まずは $buffer から tree shaking で不要なCSSを削除.
-		if ( $vk_css_tree_shaking_array && is_array( $vk_css_tree_shaking_array ) ) {
+		if ( ! empty( $vk_css_tree_shaking_array ) && is_array( $vk_css_tree_shaking_array ) ) {
 			foreach ( $vk_css_tree_shaking_array as $vk_css_array ) {
 
 				// CSS を初期化.
@@ -492,7 +492,7 @@ class VkCssOptimize {
 
 		// CSS Simply Minify //////////////////////////////////////////// .
 		// 続いて $buffer から simply minify で CSS を圧縮.
-		if ( $vk_css_simple_minify_array && is_array( $vk_css_simple_minify_array ) ) {
+		if ( ! empty( $vk_css_simple_minify_array ) && is_array( $vk_css_simple_minify_array ) ) {
 			foreach ( $vk_css_simple_minify_array as $vk_css_array ) {
 
 				// CSS を初期化.
@@ -548,17 +548,20 @@ class VkCssOptimize {
 		// tree shaking がかかっているものはpreloadの除外リストに追加する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
 
-		foreach ( $tree_shaking_handles as $css_handles ) {
-			// ハンドル名をプリロード除外リストに追加.
-			$exclude_handles[] = $css_handles;
+		if ( ! empty( $tree_shaking_handles ) && is_array( $tree_shaking_handles ) ) {
+			foreach ( $tree_shaking_handles as $css_handles ) {
+				// ハンドル名をプリロード除外リストに追加.
+				$exclude_handles[] = $css_handles;
+			}
 		}
 
 		// Simple Minify がかかっているものはpreloadから除外する ////////////////////
 		// ※ 除外しないと表示時に一瞬崩れて結局実用性に問題があるため.
-
-		foreach ( $simple_minify_handles as $css_handles ) {
-			// ハンドル名をプリロード除外リストに追加.
-			$exclude_handles[] = $css_handles;
+		if ( ! empty( $simple_minify_handles ) && is_array( $simple_minify_handles ) ) {
+			foreach ( $simple_minify_handles as $css_handles ) {
+				// ハンドル名をプリロード除外リストに追加.
+				$exclude_handles[] = $css_handles;
+			}
 		}
 
 		// プリロードから除外するCSSハンドルが option で保存されている場合.
