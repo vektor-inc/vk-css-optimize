@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "phpunit": "composer install && npx wp-env run tests-cli --env-cwd=wp-content/path/to/plugin phpunit \"phpunit -c /var/www/html/wp-content/plugins/vk-css-optimize/phpunit.xml.dist --verbose\""
+    "phpunit": "composer install && npx wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/vk-css-optimize/phpunit.xml.dist --verbose\""
   }
 }

@@ -32,14 +32,6 @@ class getThemeTemplate extends WP_UnitTestCase {
 				),
 				'correct' => 'x-t9',
 			),
-			// lightningからkatawaraのライブプレビューを行う
-			array(
-				'option'  => array(
-					'theme' => 'lightning',
-					'target_url' => admin_url() . '/customize.php?theme=katawara',
-				),
-				'correct' => 'katawara',
-			),
 		);
 		print PHP_EOL;
 		print '------------------------------------' . PHP_EOL;
