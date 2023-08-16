@@ -8,13 +8,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - name: Setup PHP 7.4
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: 7.4
+    - name: Install NPM Scripts
+      run: npm install
+    - name: Install Composer Package
+      run: composer install
+    - name: Install @wordpress/env
+      run: npm install -g @wordpress/env
+    - name: Run @wordpress/env
+      run: npx wp-env start
 
+    # PHPUnitテスト実行
     - name: Run PHPUnit test.
       run: |
         npm run phpunit
