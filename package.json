@@ -1,5 +1,7 @@
 {
   "scripts": {
-    "phpunit": "composer install && npx wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/vk-css-optimize/phpunit.xml.dist --verbose\""
+    "phpunit": "wp-env start && wp-env run --env-cwd=\"wp-content/plugins/vk-css-optimize\" tests-wordpress vendor/bin/phpunit -c .phpunit.xml.dist --verbose",
+    "phpunit2": "composer install && npx wp-env run --env-cwd=\"wp-content/plugins/vk-css-optimize\" tests-wordpress /vendor/bin/phpunit -c .phpunit.xml.dist --verbose",
+    "phpunit3": "composer install && npx wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/vk-css-optimize/phpunit.xml.dist --verbose\""
   }
 }
