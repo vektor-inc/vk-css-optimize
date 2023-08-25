@@ -2,7 +2,7 @@
 /**
  * Class getThemeTemplate
  *
- * @package vk-blocks
+ * @package vektor-inc/vk-css-optimize
  */
 
 use VektorInc\VK_CSS_Optimize\VkCssOptimize;
