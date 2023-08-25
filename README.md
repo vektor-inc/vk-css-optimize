@@ -15,6 +15,12 @@ load autoload
 require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 ```
 
+## PHPUnitテスト
+
+```
+npm run phpunit
+```
+
 ## E2Eテスト
 
 現状単体テストは未実装のため https://github.com/vektor-inc/lightning で行う。
