@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.2.0
+ * @version 0.2.1
  */
 
 namespace VektorInc\VK_CSS_Optimize;
@@ -221,6 +221,15 @@ class VkCssOptimize {
 	}
 
 	/**
+	 * Get theme template
+	 *
+	 * @return string $theme_template .
+	 */
+	public static function get_theme_template() {
+		return ! empty( $_GET['wp_theme_preview'] ) ? sanitize_text_field( wp_unslash( $_GET['wp_theme_preview'] ) ) : get_template();
+	}
+
+	/**
 	 * CSS Optimize Options
 	 * 古いオプションやデフォルト値を結合して返す
 	 *
@@ -233,7 +242,7 @@ class VkCssOptimize {
 	 */
 	public static function get_css_optimize_options() {
 
-		$theme_textdomain = wp_get_theme()->get( 'TextDomain' );
+		$theme_textdomain = self::get_theme_template();
 
 		// CSS高速化を各テーマなどのoption側で保存していた頃の互換処理.
 		if ( 'lightning' === $theme_textdomain || 'lightning-pro' === $theme_textdomain ) {

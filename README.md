@@ -15,6 +15,12 @@ load autoload
 require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 ```
 
+## PHPUnitテスト
+
+```
+npm run phpunit
+```
+
 ## E2Eテスト
 
 現状単体テストは未実装のため https://github.com/vektor-inc/lightning で行う。
@@ -34,6 +40,9 @@ npx playwright test --project=chromium --trace on
 ---
 
 ## Change log
+
+0.2.1
+[ 不具合修正 ] テーマ名取得方法 修正
 
 0.2.0
 [ 不具合修正 ] PHP Warning 修正
