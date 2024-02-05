@@ -388,7 +388,7 @@ class VkCssOptimize {
 		// 圧縮用の情報を生成.
 		if ( ! empty( $simple_minify_handles ) && is_array( $simple_minify_handles ) ) {
 			foreach ( $simple_minify_handles as $css_handle ) {
-				if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
+				if ( ! empty( $registerd[ $css_handle ] ) && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) {
 					$css_array['simple_minify_css'][ $css_handle ] = array(
 						'id'      => $css_handle,
 						'url'     => $registerd[ $css_handle ]->src,
