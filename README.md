@@ -41,6 +41,9 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
+0.2.2
+[ 不具合修正 ] 391 行目の条件処理修正
+
 0.2.1
 [ 不具合修正 ] テーマ名取得方法 修正
 

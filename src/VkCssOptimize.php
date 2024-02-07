@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.2.1
+ * @version 0.2.2
  */
 
 namespace VektorInc\VK_CSS_Optimize;
@@ -52,7 +52,7 @@ class VkCssOptimize {
 		);
 
 		$mo_file = $domain . '-' . $locale . '.mo';
-		$path    = realpath( dirname( __FILE__ ) . '/languages' );
+		$path    = realpath( __DIR__ . '/languages' );
 		if ( $path && file_exists( $path ) ) {
 			load_textdomain( $domain, $path . '/' . $mo_file );
 		}
@@ -65,8 +65,8 @@ class VkCssOptimize {
 	 */
 	public static function customize_register( $wp_customize ) {
 
-		require_once dirname( __FILE__ ) . '/CustomHtmlControl.php';
-		require_once dirname( __FILE__ ) . '/CustomTextControl.php';
+		require_once __DIR__ . '/CustomHtmlControl.php';
+		require_once __DIR__ . '/CustomTextControl.php';
 
 		global $prefix_customize_panel;
 		$wp_customize->add_section(
@@ -204,7 +204,6 @@ class VkCssOptimize {
 				'description' => __( 'If you choose "Active Preload CSS" that css load timing was changed.If you have any do not want to preload css file that please fill in handle(id) name. Ex) pluginname_a-style,pluginname_b-css', 'css-optimize' ),
 			)
 		);
-
 	}
 
 	/**
@@ -388,7 +387,7 @@ class VkCssOptimize {
 		// 圧縮用の情報を生成.
 		if ( ! empty( $simple_minify_handles ) && is_array( $simple_minify_handles ) ) {
 			foreach ( $simple_minify_handles as $css_handle ) {
-				if ( ! empty( $registerd[ $css_handle ] && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) ) {
+				if ( ! empty( $registerd[ $css_handle ] ) && false !== strpos( $registerd[ $css_handle ]->src, site_url() ) ) {
 					$css_array['simple_minify_css'][ $css_handle ] = array(
 						'id'      => $css_handle,
 						'url'     => $registerd[ $css_handle ]->src,
@@ -416,7 +415,7 @@ class VkCssOptimize {
 
 		// Lode Modules.
 		// Tree shaking モジュール読み込み .
-		require_once dirname( __FILE__ ) . '/class-css-tree-shaking.php';
+		require_once __DIR__ . '/class-css-tree-shaking.php';
 
 		// Load CSS Arrays
 		// 軽量化するCSSの情報配列読み込み.
@@ -629,5 +628,4 @@ class VkCssOptimize {
 
 		return $inidata;
 	}
-
 }
