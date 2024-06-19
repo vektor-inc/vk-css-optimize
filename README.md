@@ -41,6 +41,8 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
+[ 不具合修正 ] 325 行目の Deprecated: Use of "self" in callables is deprecated を修正
+
 0.2.2
 [ 不具合修正 ] 391 行目の条件処理修正
 
