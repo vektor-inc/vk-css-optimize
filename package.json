@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "@wordpress/env": "^8.4.0"
+    "@wordpress/env": "^10.1.0"
   },
   "scripts": {
-    "phpunit": "wp-env start && wp-env run --env-cwd=\"wp-content/plugins/vk-css-optimize\" tests-wordpress vendor/bin/phpunit -c .phpunit.xml.dist --verbose"
+    "phpunit": "wp-env start && wp-env run tests-cli --env-cwd='wp-content/plugins/vk-css-optimize' vendor/bin/phpunit -c .phpunit.xml --verbose"
   }
 }
