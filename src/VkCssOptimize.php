@@ -449,6 +449,9 @@ class VkCssOptimize {
 			$buffer
 		);
 
+		// ファイルシステムが ftpext の場合 FTP に接続できないとエラーになるのを回避
+		$connect = 'ftpext' === get_filesystem_method() ? ! empty( $wp_filesystem->link ) : true;
+
 		// CSS Tree Shaking //////////////////////////////////////////// .
 		// まずは $buffer から tree shaking で不要なCSSを削除.
 		if ( ! empty( $vk_css_tree_shaking_array ) && is_array( $vk_css_tree_shaking_array ) ) {
@@ -459,7 +462,7 @@ class VkCssOptimize {
 
 				// 読み込むCSSファイルのパス.
 				$path_name = $vk_css_array['path'];
-				if ( ! empty( $wp_filesystem ) ) {
+				if ( ! empty( $wp_filesystem ) && ! empty( $connect ) ) {
 					$css = $wp_filesystem->get_contents( $path_name );
 				}
 
