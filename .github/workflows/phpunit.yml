@@ -21,5 +21,4 @@ jobs:
 
     # PHPUnitテスト実行
     - name: Run PHPUnit test.
-      run: |
-        npm run phpunit
+      run:  npm run phpunit
