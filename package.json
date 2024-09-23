@@ -1,8 +1,10 @@
 {
   "devDependencies": {
-    "@wordpress/env": "^8.4.0"
+    "@wordpress/env": "^10.7.0",
+    "npm-check-updates": "^17.1.1"
   },
   "scripts": {
+    "update": "ncu -u && rm -rf node_modules package-lock.json && npm install",
     "phpunit": "wp-env start && wp-env run --env-cwd=\"wp-content/plugins/vk-css-optimize\" tests-wordpress vendor/bin/phpunit -c .phpunit.xml.dist --verbose"
   }
 }

@@ -2,5 +2,10 @@
 	"core": null,
 	"mappings": {
 		"wp-content/plugins/vk-css-optimize": "./"
+	},
+	"config": {
+		"WP_DEBUG": true,
+		"SCRIPT_DEBUG": true,
+		"FS_METHOD": "direct"
 	}
 }
