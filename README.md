@@ -41,6 +41,7 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
+0.2.3
 [ その他 ] FS_METHOD が ftpext の場合の処理を変更
 
 0.2.2
