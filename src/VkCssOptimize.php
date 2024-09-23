@@ -450,6 +450,7 @@ class VkCssOptimize {
 		);
 
 		// ファイルシステムが ftpext の場合 FTP に接続できないとエラーになるのを回避
+		// $wp_filesystem->link が空の場合に $connect が false になる
 		$connect = 'ftpext' === get_filesystem_method() ? ! empty( $wp_filesystem->link ) : true;
 
 		// CSS Tree Shaking //////////////////////////////////////////// .
