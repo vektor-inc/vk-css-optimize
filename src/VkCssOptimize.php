@@ -322,7 +322,7 @@ class VkCssOptimize {
 		// template_redirect が呼ばれる前でのみ実行する .
 		if ( $is_use_themes && did_action( 'template_redirect' ) === 0 ) {
 			// バッファ開始.
-			ob_start( array( VkCssOptimize::class, 'css_tree_shaking_buffer' ) );
+			ob_start( array(  __CLASS__, 'css_tree_shaking_buffer' ) );
 		}
 		return $is_use_themes;
 	}
