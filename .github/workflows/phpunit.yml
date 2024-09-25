@@ -6,19 +6,44 @@ jobs:
   test:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        php-versions: ['7.4', '8.0', '8.1']
+        wp-versions: ['6.6','6.5','6.4']
+    name: PHP Unit test ${{ matrix.php-versions }} / WP ${{ matrix.wp-versions }} Test
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306
+        env:
+          MYSQL_ROOT_PASSWORD: wordpress
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
     steps:
     - uses: actions/checkout@v3
-
+    - name: Setup Node.js (.node-version)
+      uses: actions/setup-node@v1
+      with:
+        node-version: 20.x
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php${{ matrix.php-versions }}-${{ hashFiles('**/composer.lock') }}
+    - name: Setup PHP ${{ matrix.php-versions }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
     - name: Install NPM Scripts
       run: npm install
     - name: Install Composer Package
       run: composer install
-    - name: Install @wordpress/env
-      run: npm install -g @wordpress/env
-    - name: Run @wordpress/env
-      run: npx wp-env start
-
+    - name: Install several WordPress version by wp-env.override.json
+      run: WP_ENV_PHP_VERSION=${{ matrix.php-versions }} WP_ENV_CORE=WordPress/WordPress#${{ matrix.wp-versions }} npm run wp-env start --update
+    - name: Check WordPress Version
+      run: npm run wp-env run cli wp core version
     # PHPUnitテスト実行
     - name: Run PHPUnit test.
       run:  npm run phpunit

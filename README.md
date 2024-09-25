@@ -41,6 +41,9 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
+0.2.4
+[ 不具合修正 ] 325 行目の Deprecated: Use of "self" in callables is deprecated を修正
+
 0.2.3
 [ その他 ] FS_METHOD が ftpext の場合の処理を変更
 

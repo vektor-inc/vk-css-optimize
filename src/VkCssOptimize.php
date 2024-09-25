@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.2.3
+ * @version 0.2.4
  */
 
 namespace VektorInc\VK_CSS_Optimize;
@@ -322,7 +322,7 @@ class VkCssOptimize {
 		// template_redirect が呼ばれる前でのみ実行する .
 		if ( $is_use_themes && did_action( 'template_redirect' ) === 0 ) {
 			// バッファ開始.
-			ob_start( 'self::css_tree_shaking_buffer' );
+			ob_start( array( __CLASS__, 'css_tree_shaking_buffer' ) );
 		}
 		return $is_use_themes;
 	}
