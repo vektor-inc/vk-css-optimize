@@ -309,6 +309,12 @@ class VkCssOptimize {
 			update_option( 'vk_css_optimize_options', $vk_css_optimize_options );
 		}
 
+		// 0.2.5
+		// VK Blocks 1.85 からテーブルのスクロールヒントのCSSが TreeShaking で正しく処理できず、
+		// その影響で非表示クラスが効かなくなるなどの不具合が発生するため、
+		// 見た目の不具合回避のために応急処置として強制的に TreeShaking を無効化
+		$vk_css_optimize_options['tree_shaking'] = '';
+
 		return $vk_css_optimize_options;
 	}
 
