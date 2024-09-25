@@ -41,6 +41,9 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
+0.2.5
+[ 不具合修正 ] VK Blocks 1.85 からテーブルのスクロールヒントのCSSが TreeShaking で正しく処理できず、その影響で非表示クラスが効かなくなるなどの不具合が発生するため、見た目の不具合回避のために応急処置として強制的に TreeShaking を無効化
+
 0.2.4
 [ 不具合修正 ] 325 行目の Deprecated: Use of "self" in callables is deprecated を修正
 
