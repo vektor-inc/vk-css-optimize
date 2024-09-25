@@ -5,7 +5,7 @@
  * @package vektor-inc/vk-css-optimize
  * @license GPL-2.0+
  *
- * @version 0.2.4
+ * @version 0.2.5
  */
 
 namespace VektorInc\VK_CSS_Optimize;
