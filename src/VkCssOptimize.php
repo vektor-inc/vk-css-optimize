@@ -20,7 +20,7 @@ class VkCssOptimize {
 	 */
 	public function __construct() {
 		add_action( 'customize_register', array( __CLASS__, 'customize_register' ) );
-		add_filter( 'css_tree_shaking_exclude', array( __CLASS__, 'tree_shaking_exclude' ) );
+		add_filter( 'css_tree_shaking_js_added_class', array( __CLASS__, 'tree_shaking_js_added_class' ) );
 
 		$options = self::get_css_optimize_options();
 
@@ -630,7 +630,7 @@ class VkCssOptimize {
 	 *
 	 * @param string $jsaddlist exclude css class.
 	 */
-	public static function tree_shaking_exclude( $jsaddlist ) {
+	public static function tree_shaking_js_added_class( $jsaddlist ) {
 		$options = self::get_css_optimize_options();
 
 		$exclude_classes_array = array();
