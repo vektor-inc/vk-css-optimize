@@ -2,7 +2,9 @@
 /**
  * VK CSS Tree Shaking Config
  *
- * @package Katawara
+ * This is config sample file
+ *
+ * @package vektor-inc/vk-css-optimize
  */
 
 global $prefix_customize_panel;
@@ -12,11 +14,7 @@ $prefix_customize_panel = '';
  * Optimize CSS.
  */
 
-if ( ! class_exists( 'VK_CSS_Optimize' ) ) {
-	require_once dirname( __FILE__ ) . '/package/class-vk-css-optimize.php';
-}
-
-function Katawara_css_tree_shaking_array( $vk_css_tree_shaking_array ){
+function Katawara_css_tree_shaking_array( $vk_css_tree_shaking_array ) {
 	$Katawara_style_array = array(
 		'id'      => 'katawara-design-style',
 		'url'     => get_template_directory_uri() . '/assets/css/style.min.css',
@@ -27,9 +25,9 @@ function Katawara_css_tree_shaking_array( $vk_css_tree_shaking_array ){
 	return $vk_css_tree_shaking_array;
 }
 add_filter( 'vk_css_tree_shaking_array', 'Katawara_css_tree_shaking_array' );
-	
+
 /**
- * 
+ *
  * CSS Tree Shaking Exclude
  *
  * @param array $inidata CSS Tree Shaking Exclude Paramator.
