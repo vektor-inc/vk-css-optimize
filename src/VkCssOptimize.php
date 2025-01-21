@@ -488,6 +488,7 @@ class VkCssOptimize {
 					'btn',
 					'btn-primary',
 				);
+				$jsaddlist = apply_filters( 'css_tree_shaking_exclude', $jsaddlist );
 				$jsaddlist = apply_filters( 'css_tree_shaking_js_added_class', $jsaddlist );
 
 				// CSS の中身が取得できた場合のみ Tree Shaking を反映する
