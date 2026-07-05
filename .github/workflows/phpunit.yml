@@ -1,10 +1,13 @@
 name: phpunit
 
-on: pull_request
+on:
+  pull_request:
+    types: [opened, reopened, labeled, synchronize]
 
 jobs:
   test:
 
+    if: contains(github.event.pull_request.labels.*.name, 'run-ci')
     runs-on: ubuntu-latest
     strategy:
       matrix:
