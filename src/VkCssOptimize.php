@@ -20,7 +20,7 @@ class VkCssOptimize {
 	 */
 	public function __construct() {
 		add_action( 'customize_register', array( __CLASS__, 'customize_register' ) );
-		add_filter( 'css_tree_shaking_exclude', array( __CLASS__, 'tree_shaking_exclude' ) );
+		add_filter( 'css_tree_shaking_js_added_class', array( __CLASS__, 'tree_shaking_js_added_class' ) );
 
 		$options = self::get_css_optimize_options();
 
@@ -309,12 +309,6 @@ class VkCssOptimize {
 			update_option( 'vk_css_optimize_options', $vk_css_optimize_options );
 		}
 
-		// 0.2.5
-		// VK Blocks 1.85 からテーブルのスクロールヒントのCSSが TreeShaking で正しく処理できず、
-		// その影響で非表示クラスが効かなくなるなどの不具合が発生するため、
-		// 見た目の不具合回避のために応急処置として強制的に TreeShaking を無効化
-		$vk_css_optimize_options['tree_shaking'] = '';
-
 		return $vk_css_optimize_options;
 	}
 
@@ -473,10 +467,34 @@ class VkCssOptimize {
 					$css = $wp_filesystem->get_contents( $path_name );
 				}
 
+				$jsaddlist = array(
+					'device-mobile',
+					'header_scrolled',
+					'active',
+					'menu-open',
+					'vk-mobile-nav-menu-btn',
+					'vk-mobile-nav-open',
+					'vk-menu-acc-active',
+					'acc-parent-open',
+					'acc-btn',
+					'acc-btn-open',
+					'acc-btn-close',
+					'acc-child-open',
+					'carousel-item-left',
+					'carousel-item-next',
+					'carousel-item-right',
+					'carousel-item-prev',
+					'form-control',
+					'btn',
+					'btn-primary',
+				);
+				$jsaddlist = apply_filters( 'css_tree_shaking_exclude', $jsaddlist );
+				$jsaddlist = apply_filters( 'css_tree_shaking_js_added_class', $jsaddlist );
+
 				// CSS の中身が取得できた場合のみ Tree Shaking を反映する
 				if ( ! empty( $css ) ) {
 					// tree shaking を実行して再格納 .
-					$css = CSS_tree_shaking::extended_minify( CSS_tree_shaking::simple_minify( $css ), $buffer );
+					$css = CSS_tree_shaking::extended_minify( CSS_tree_shaking::simple_minify( $css ), $buffer, $jsaddlist );
 
 					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
 					$buffer = str_replace(
@@ -611,9 +629,9 @@ class VkCssOptimize {
 	/**
 	 * Exclude CSS.
 	 *
-	 * @param string $inidata exclude css class.
+	 * @param string $jsaddlist exclude css class.
 	 */
-	public static function tree_shaking_exclude( $inidata ) {
+	public static function tree_shaking_js_added_class( $jsaddlist ) {
 		$options = self::get_css_optimize_options();
 
 		$exclude_classes_array = array();
@@ -634,8 +652,8 @@ class VkCssOptimize {
 
 		}
 
-		$inidata['class'] = array_merge( $inidata['class'], $exclude_classes_array );
+		$jsaddlist = array_merge( $jsaddlist, $exclude_classes_array );
 
-		return $inidata;
+		return $jsaddlist;
 	}
 }
