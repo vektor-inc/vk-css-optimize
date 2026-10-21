@@ -3,6 +3,9 @@
     "@wordpress/env": "^10.7.0",
 	 "npm-check-updates": "^17.1.1"
   },
+  "volta": {
+    "node": "24.22.1"
+  },
   "scripts": {
     "wp-env": "wp-env",
 	"update": "ncu -u && rm -rf node_modules package-lock.json && npm install",
