@@ -410,6 +410,34 @@ class VkCssOptimize {
 	}
 
 	/**
+	 * stylesheet の link タグを style タグに置換する
+	 *
+	 * WordPress のバージョンによって link タグの type='text/css' の有無や、末尾の ' />' と '>' が異なるため、
+	 * その違いを吸収して同じ link タグに当てる。
+	 *
+	 * @param string $buffer HTML 全体.
+	 * @param string $id     スタイルのハンドル名（id 属性の '-css' を除いた部分）.
+	 * @param string $href   link タグの href 属性の値（バージョンパラメーターを付ける場合は付けた状態）.
+	 * @param string $css    style タグに埋め込む CSS.
+	 * @return string 置換後の HTML.
+	 */
+	public static function replace_stylesheet_link_with_style( $buffer, $id, $href, $css ) {
+		$pattern = '#<link rel=\'stylesheet\' id=\'' . preg_quote( $id . '-css', '#' ) . '\' href=\'' . preg_quote( $href, '#' ) . '\'(?: type=\'text/css\')? media=\'all\'\s*/?>#';
+
+		// $css に含まれる $ や \ が後方参照として解釈されないよう、コールバックで置換する.
+		$replaced = preg_replace_callback(
+			$pattern,
+			function () use ( $id, $css ) {
+				return '<style id=\'' . $id . '-css\' type=\'text/css\'>' . $css . '</style>';
+			},
+			$buffer
+		);
+
+		// 正規表現エラー時は元の HTML を返す.
+		return null === $replaced ? $buffer : $replaced;
+	}
+
+	/**
 	 * Change Buffer of HTML Document
 	 *
 	 * @param string $buffer Gotten HTML Document.
@@ -479,10 +507,11 @@ class VkCssOptimize {
 					$css = CSS_tree_shaking::extended_minify( CSS_tree_shaking::simple_minify( $css ), $buffer );
 
 					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
-					$buffer = str_replace(
-						'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' type=\'text/css\' media=\'all\' />',
-						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-						$buffer
+					$buffer = self::replace_stylesheet_link_with_style(
+						$buffer,
+						$vk_css_array['id'],
+						$vk_css_array['url'] . '?ver=' . $vk_css_array['version'],
+						$css
 					);
 
 					// ↓↓↓↓↓↓↓↓ 軽微な互換処理（削除しても Fatal error などにはなない）2023.06.30 以降削除可
@@ -532,16 +561,18 @@ class VkCssOptimize {
 					$css = CSS_tree_shaking::simple_minify( $css );
 
 					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターあり）.
-					$buffer = str_replace(
-						'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '?ver=' . $vk_css_array['version'] . '\' type=\'text/css\' media=\'all\' />',
-						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-						$buffer
+					$buffer = self::replace_stylesheet_link_with_style(
+						$buffer,
+						$vk_css_array['id'],
+						$vk_css_array['url'] . '?ver=' . $vk_css_array['version'],
+						$css
 					);
 					// ファイルで読み込んでいるCSSを直接出力に置換（バージョンパラメーターなし）.
-					$buffer = str_replace(
-						'<link rel=\'stylesheet\' id=\'' . $vk_css_array['id'] . '-css\' href=\'' . $vk_css_array['url'] . '\' type=\'text/css\' media=\'all\' />',
-						'<style id=\'' . $vk_css_array['id'] . '-css\' type=\'text/css\'>' . $css . '</style>',
-						$buffer
+					$buffer = self::replace_stylesheet_link_with_style(
+						$buffer,
+						$vk_css_array['id'],
+						$vk_css_array['url'],
+						$css
 					);
 				}
 			}
