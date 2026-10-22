@@ -41,7 +41,7 @@ npx playwright test --project=chromium --trace on
 
 ## Change log
 
-[ 不具合修正 ] 最新の WordPress で link タグに type="text/css" が出力されなくなり、Tree Shaking と Simple Minify が効かなくなる不具合を修正
+[ 不具合修正 ] 最新の WordPress で Tree Shaking と Simple Minify が効かず、CSS が HTML に埋め込まれない不具合を修正
 [ 開発環境 ] 開発・CI で使う Node.js を 24 系（24.22.1 以上）に更新
 
 0.2.5

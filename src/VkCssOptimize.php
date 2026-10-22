@@ -412,7 +412,8 @@ class VkCssOptimize {
 	/**
 	 * stylesheet の link タグを style タグに置換する
 	 *
-	 * WordPress のバージョンによって link タグの type='text/css' の有無や、末尾の ' />' と '>' が異なるため、
+	 * WordPress のバージョンやテーマの html5 対応（add_theme_support( 'html5', array( 'style' ) )）によって
+	 * link タグの type='text/css' の有無や、末尾の ' />' と '>' が異なるため、
 	 * その違いを吸収して同じ link タグに当てる。
 	 *
 	 * @param string $buffer HTML 全体.

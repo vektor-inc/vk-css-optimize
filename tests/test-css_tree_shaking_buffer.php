@@ -28,7 +28,8 @@ class CssTreeShakingBufferTest extends WP_UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		$upload         = wp_upload_dir();
+		// アップロード URL の site_url() を ABSPATH に置換したパスが実ファイルと一致する前提（WP_CONTENT_DIR を移動した環境では成り立たない）.
+		$upload        = wp_upload_dir();
 		$this->css_url  = $upload['baseurl'] . '/vk-css-optimize-test.css';
 		$this->css_path = $upload['basedir'] . '/vk-css-optimize-test.css';
 		wp_mkdir_p( $upload['basedir'] );
