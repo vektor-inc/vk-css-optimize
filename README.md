@@ -42,6 +42,7 @@ npx playwright test --project=chromium --trace on
 ## Change log
 
 [ 開発環境 ] 開発・CI で使う Node.js を 24 系（24.22.1 以上）に更新
+[ 開発環境 ] Node.js のバージョン指定を package.json の volta から .node-version へ移行
 
 0.2.5
 [ 不具合修正 ] VK Blocks 1.85 からテーブルのスクロールヒントのCSSが TreeShaking で正しく処理できず、その影響で非表示クラスが効かなくなるなどの不具合が発生するため、見た目の不具合回避のために応急処置として強制的に TreeShaking を無効化
